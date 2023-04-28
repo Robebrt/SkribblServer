@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkribblServer", "SkribblServer\SkribblServer.csproj", "{91588721-2D8F-4D18-949D-F2B6AF7167BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkribblClient", "SkribblClient\SkribblClient.csproj", "{6F4C62FE-8D0E-43AC-9E8E-A7CF913B9C42}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91588721-2D8F-4D18-949D-F2B6AF7167BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91588721-2D8F-4D18-949D-F2B6AF7167BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91588721-2D8F-4D18-949D-F2B6AF7167BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91588721-2D8F-4D18-949D-F2B6AF7167BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F4C62FE-8D0E-43AC-9E8E-A7CF913B9C42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F4C62FE-8D0E-43AC-9E8E-A7CF913B9C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F4C62FE-8D0E-43AC-9E8E-A7CF913B9C42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F4C62FE-8D0E-43AC-9E8E-A7CF913B9C42}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AEE0BB0C-BC6D-45DD-A361-4ED243331273}
+	EndGlobalSection
+EndGlobal
