@@ -4,7 +4,8 @@ namespace SkribblClient
 {
     public partial class Form1 : Form
     {
-        Client client; 
+        Client client;
+        GameForm gameForm;
         public Form1()
         {
             InitializeComponent();
@@ -48,6 +49,12 @@ namespace SkribblClient
         {
             client.stopClient();
             client = null;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            gameForm = new GameForm();
+            gameForm.Show();
         }
     }
 }

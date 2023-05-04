@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkribblServer", "SkribblServer\SkribblServer.csproj", "{91588721-2D8F-4D18-949D-F2B6AF7167BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkribblClient", "SkribblClient\SkribblClient.csproj", "{6F4C62FE-8D0E-43AC-9E8E-A7CF913B9C42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkribblClient", "SkribblClient\SkribblClient.csproj", "{6F4C62FE-8D0E-43AC-9E8E-A7CF913B9C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
