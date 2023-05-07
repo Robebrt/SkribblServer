@@ -8,9 +8,10 @@ namespace SkribblServer
 {
     internal class Client
     {
-        string clNo;
+        int clNo;
         Socket socket;
-        public void startClient(Socket socketIn, string clientNo)
+        
+        public void startClient(Socket socketIn, int clientNo)
         {
             this.socket = socketIn;
             this.clNo = clientNo;
@@ -31,32 +32,24 @@ namespace SkribblServer
                 {
                     requestCount = requestCount + 1;
                     int noBytesRecieved = socket.Receive(bytesFrom);
-                    if(noBytesRecieved == 0)
-                    {
-                        Server.clientList.Remove(Int32.Parse(clNo));
-                        break;
-                    }    
+                    //if(noBytesRecieved == 0)
+                    //{
+                    //    Server.clientList.Remove(this);
+                    //    break;
+                    //}    
                     dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
-                    dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("<EOF>"));
-                    Console.WriteLine(" >> " + "From client-" + clNo + dataFromClient);
-
-                    rCount = Convert.ToString(requestCount);
-                    serverResponse = "Cient " + clNo + " said: " + dataFromClient;
-                    sendBytes = Encoding.ASCII.GetBytes(serverResponse);
-                    Console.WriteLine(Server.clientList.Count());
-                    foreach (Client client in Server.clientList.Values)
+                    Console.WriteLine(dataFromClient);
+                    int indexEOF = dataFromClient.IndexOf("<EOF>");
+                    if (indexEOF > 0)
                     {
-                        try
-                        {
-                            int bytesSend = client.socket.Send(sendBytes);
-                            //Console.WriteLine($"{client.socket.RemoteEndPoint} {bytesSend}");
-
-                        }
-                        catch (SocketException ex)
-                        {
-                            Console.WriteLine("Failed to send message to a socket: " + ex.Message);
-                        }
+                        dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("<EOF>"));
+                        Console.WriteLine("From client: " + clNo + dataFromClient);
+                        serverResponse = RequestHandler(dataFromClient, this);
+                        Console.WriteLine(serverResponse);
+                        sendBytes = Encoding.ASCII.GetBytes(serverResponse);
+                        //Console.WriteLine(Server.clientList.Count());
                     }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -65,6 +58,73 @@ namespace SkribblServer
                 }
 
             }
+        }
+        public void SendMessageToClients(List<Client> list, Byte[] bytesToSend)
+        {
+            foreach (Client client in list)
+            {
+                try
+                {
+                    int bytesSend = client.socket.Send(bytesToSend);
+                    //Console.WriteLine($"{client.socket.RemoteEndPoint} {bytesSend}");
+
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine("Failed to send message to a socket: " + ex.Message);
+                }
+            }
+        }
+        public string RequestHandler(string clientRequest, Client client)
+        {
+            string response = "";
+            if(clientRequest.Contains("<Create room>"))
+            { //create the room
+                try
+                {
+                    List<Client> clientList = new List<Client>();
+                    int roomId = Int32.Parse(clientRequest.Replace("<Create room>", ""));
+                    clientList.Add(client);
+                    Server.roomsList.Add(roomId, clientList);
+                    response = "Room created";
+                }
+                catch(FormatException ex)
+                {
+                    response = "Cannot create room";
+                }
+            }
+            else if(clientRequest.Contains("<Join room>"))
+            {
+                try
+                {
+
+                    int roomId = Int32.Parse(clientRequest.Replace("<Join room>", ""));
+                    if(Server.roomsList.TryGetValue(roomId,out List<Client> list))
+                    {
+                        list.Add(client);
+                        response = "Room joined";
+                    }
+                    else
+                    {
+                        response = "Room doesn't exist";
+                    }
+                    
+                    
+                }
+                catch (FormatException ex)
+                {
+                    response = "Cannot join room";
+                }
+            }
+            else if(clientRequest.Contains("<Draw>"))
+            {
+                //draw to all users
+            }
+            else if(clientRequest.Contains("<Chat>"))
+            {
+                //send message to users
+            }
+            return response;
         }
     }
 }

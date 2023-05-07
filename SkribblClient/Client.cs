@@ -10,16 +10,18 @@ namespace SkribblClient
 {
     internal class Client
     {
-        Socket sender = null;
-        Form1 form = null;
-        RichTextBox errorTextBox = null;
+        Socket sender;
+        Form1 form1;
+        RichTextBox errorTextBox;
         Boolean connection;
-        public Client(Form1 form1)
+        RichTextBox chatRb;
+        public Client(Form1 f1)
         {
-            form = form1;
-            errorTextBox = form1.richTextBox2;
+            this.form1 = f1;
+            //errorTextBox = form1.richTextBox2;
+            chatRb = form1.richTextBox1;
         }
-        public void StartClient(RichTextBox rb)
+        public void StartClient(Player player)
         {
             byte[] bytes = new byte[1024];
             
@@ -43,49 +45,78 @@ namespace SkribblClient
                     // Connect to Remote EndPoint
                     sender.Connect(remoteEP);
                     connection = true;
-                   
+
 
                     // Encode the data string into a byte array.
-                    
-                    byte[] msg = Encoding.ASCII.GetBytes("User connected<EOF>");
 
-                    // Send the data through the socket.
-                    int bytesSent = sender.Send(msg);
+                    //byte[] msg = Encoding.ASCII.GetBytes("User connected<EOF>");
 
-                    // Receive the response from the remote device.
-                    int bytesRec = sender.Receive(bytes);
-                    
-                    rb.AppendText(Encoding.ASCII.GetString(bytes, 0, bytesRec)+"\n");
-                    Task.Run(() =>
+                    //// Send the data through the socket.
+                    //int bytesSent = sender.Send(msg);
+
+                    //// Receive the response from the remote device.
+                    //int bytesRec = sender.Receive(bytes);
+
+                    if (player != null)
                     {
-                        readMessage(rb);
-                    });
+                        if(form1.actionType == "<Create room>")
+                        {
+                            CreateRoom(player);
+                            ReadMessage(chatRb);
+                        }
+                        else if(form1.actionType == "<Join room>")
+                        {
+
+                        }
+
+                    }
+                    //
+                    //Task.Run(() =>
+                    //{
+                    //    ReadMessage(rb);
+                    //});
 
                 }
                 catch (ArgumentNullException ane)
                 {
-                    sendError("ArgumentNullException : {0} "+ane.ToString());
+                    SendError("ArgumentNullException : {0} "+ane.ToString());
                 }
                 catch (SocketException se)
                 {
-                    sendError("SocketException : {0} "+se.ToString());
+                    SendError("SocketException : {0} "+se.ToString());
                 }
                 catch (Exception e)
                 {
-                    sendError("Unexpected exception : {0} "+e.ToString());
+                    SendError("Unexpected exception : {0} "+e.ToString());
                 }
 
             }
             catch (Exception e)
             {
-                sendError(e.ToString());
+                SendError(e.ToString());
             }
         }
-        public void sendError(string err)
+        public void SendError(string err)
         {
-            form.RunOnUiThread(() => errorTextBox.AppendText(err+"\n"));
+            //form.RunOnUiThread(() => errorTextBox.AppendText(err+"\n"));
         }
-        public void sendMessage(byte[] msg, RichTextBox rb, TextBox tb)
+        public void CreateRoom(Player player)
+        {
+            byte[] bytes = new byte[1024];
+            int roomId = player.GetRoom();
+
+            // Encode the data string into a byte array.
+            byte[] msg = Encoding.ASCII.GetBytes("<Create room>" + roomId + "<EOF>");
+
+            // Send the data through the socket.
+            int bytesSent = sender.Send(msg);
+
+            // Receive the response from the remote device.
+
+                int bytesRec = sender.Receive(bytes);
+                chatRb.AppendText(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n");
+            }
+        public void SendMessage(byte[] msg, RichTextBox rb, TextBox tb)
         {
             byte[] bytes = new byte[1024];
             try
@@ -97,10 +128,10 @@ namespace SkribblClient
             }
             catch(Exception e)
             {
-                sendError("Unexpected exception : {0} "+ e.ToString());
+                SendError("Unexpected exception : {0} "+ e.ToString());
             }
         }
-        public void readMessage(RichTextBox rb)
+        public void ReadMessage(RichTextBox rb)
         {
             while (connection)
             {
@@ -112,7 +143,7 @@ namespace SkribblClient
                     {
                         break;
                     }
-                    form.RunOnUiThread(() => rb.AppendText(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n"));
+                    //form.RunOnUiThread(() => rb.AppendText(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n"));
                 }
                 catch(Exception ex) 
                 {
@@ -121,7 +152,7 @@ namespace SkribblClient
             }
 
         }
-        public void stopClient()
+        public void StopClient()
         {
             connection = false;
             sender.Shutdown(SocketShutdown.Both);

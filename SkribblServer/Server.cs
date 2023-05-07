@@ -11,7 +11,9 @@ namespace SkribblServer
     internal class Server
     {
 
-        public static Dictionary<int, Client> clientList = new Dictionary<int, Client>();
+       
+        //public static Dictionary<(int, int)> roomList = new Dictionary<(int, int)>();
+        public static Dictionary<int, List<Client>> roomsList = new Dictionary<int, List<Client>>();
         public static void StartServer()
         {
             IPHostEntry ipHostEntry = Dns.GetHostEntry("localhost");
@@ -35,15 +37,10 @@ namespace SkribblServer
                     handler = listener.Accept();
                     Console.WriteLine(" >> " + "Client No:" + Convert.ToString(counter) + " started!");
                     Client client = new Client();
-                    client.startClient(handler, Convert.ToString(counter));
-                    clientList.Add(counter, client);
+                    client.startClient(handler, counter);
+                    //clientList.Add(client);
 
                 }
-
-                //handler.Shutdown(SocketShutdown.Both);
-                //handler.Close();
-
-
             }
             catch (ArgumentNullException ane)
             {

@@ -11,10 +11,10 @@ namespace SkribblClient
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            //Application.Run(new Form1());
-            new Thread(() => Application.Run(new Form1())).Start();
-            new Thread(() => Application.Run(new Form1())).Start();
-            new Thread(() => Application.Run(new Form1())).Start();
+            Application.Run(new StartForm());
+            //new Thread(() => Application.Run(new StartForm())).Start();
+            //new Thread(() => Application.Run(new StartForm())).Start();
+            //new Thread(() => Application.Run(new StartForm())).Start();
         }
     }
 }
