@@ -53,10 +53,10 @@ namespace SkribblClient
             }
         }
 
-        //private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        //{
-        //    client.StopClient();
-        //    client = null;
-        //}
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            client.stopClient();
+            client = null;
+        }
     }
 }
