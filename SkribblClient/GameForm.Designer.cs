@@ -55,13 +55,19 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.roomShowId = new System.Windows.Forms.Label();
             this.createRooomButton = new System.Windows.Forms.Button();
-            this.joinRoomButton = new System.Windows.Forms.Button();
             this.usernameTextBox = new System.Windows.Forms.TextBox();
             this.usernameLabel = new System.Windows.Forms.Label();
             this.avatarLabel = new System.Windows.Forms.Label();
             this.RoomIdTextBox = new System.Windows.Forms.TextBox();
             this.roomIdLabel = new System.Windows.Forms.Label();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.joinRadioButton = new System.Windows.Forms.RadioButton();
+            this.createRadioButton = new System.Windows.Forms.RadioButton();
+            this.connectButton = new System.Windows.Forms.Button();
+            this.nextImgButton = new System.Windows.Forms.Button();
+            this.prevImgButton = new System.Windows.Forms.Button();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -69,6 +75,8 @@
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -355,37 +363,33 @@
             // 
             // createRooomButton
             // 
-            this.createRooomButton.Location = new System.Drawing.Point(81, 235);
+            this.createRooomButton.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.createRooomButton.Location = new System.Drawing.Point(78, 305);
             this.createRooomButton.Name = "createRooomButton";
-            this.createRooomButton.Size = new System.Drawing.Size(87, 23);
+            this.createRooomButton.Size = new System.Drawing.Size(122, 36);
             this.createRooomButton.TabIndex = 0;
             this.createRooomButton.Text = "Create room";
             this.createRooomButton.UseVisualStyleBackColor = true;
             this.createRooomButton.Click += new System.EventHandler(this.createRoomButton_Click);
             // 
-            // joinRoomButton
-            // 
-            this.joinRoomButton.Location = new System.Drawing.Point(187, 235);
-            this.joinRoomButton.Name = "joinRoomButton";
-            this.joinRoomButton.Size = new System.Drawing.Size(87, 23);
-            this.joinRoomButton.TabIndex = 1;
-            this.joinRoomButton.Text = "Join room";
-            this.joinRoomButton.UseVisualStyleBackColor = true;
-            this.joinRoomButton.Click += new System.EventHandler(this.joinRoomButton_Click);
-            // 
             // usernameTextBox
             // 
-            this.usernameTextBox.Location = new System.Drawing.Point(161, 206);
+            this.usernameTextBox.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.usernameTextBox.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.usernameTextBox.Location = new System.Drawing.Point(204, 209);
             this.usernameTextBox.Name = "usernameTextBox";
-            this.usernameTextBox.Size = new System.Drawing.Size(115, 23);
+            this.usernameTextBox.Size = new System.Drawing.Size(149, 35);
             this.usernameTextBox.TabIndex = 2;
             // 
             // usernameLabel
             // 
             this.usernameLabel.AutoSize = true;
-            this.usernameLabel.Location = new System.Drawing.Point(87, 209);
+            this.usernameLabel.BackColor = System.Drawing.Color.Transparent;
+            this.usernameLabel.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.usernameLabel.ForeColor = System.Drawing.Color.White;
+            this.usernameLabel.Location = new System.Drawing.Point(78, 212);
             this.usernameLabel.Name = "usernameLabel";
-            this.usernameLabel.Size = new System.Drawing.Size(63, 15);
+            this.usernameLabel.Size = new System.Drawing.Size(128, 31);
             this.usernameLabel.TabIndex = 3;
             this.usernameLabel.Text = "Username:";
             this.usernameLabel.Click += new System.EventHandler(this.label1_Click);
@@ -393,26 +397,33 @@
             // avatarLabel
             // 
             this.avatarLabel.AutoSize = true;
-            this.avatarLabel.Location = new System.Drawing.Point(142, 33);
+            this.avatarLabel.BackColor = System.Drawing.Color.Transparent;
+            this.avatarLabel.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.avatarLabel.ForeColor = System.Drawing.Color.White;
+            this.avatarLabel.Location = new System.Drawing.Point(448, 172);
             this.avatarLabel.Name = "avatarLabel";
-            this.avatarLabel.Size = new System.Drawing.Size(44, 15);
+            this.avatarLabel.Size = new System.Drawing.Size(90, 31);
             this.avatarLabel.TabIndex = 4;
             this.avatarLabel.Text = "Avatar:";
             // 
             // RoomIdTextBox
             // 
-            this.RoomIdTextBox.Location = new System.Drawing.Point(159, 278);
+            this.RoomIdTextBox.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.RoomIdTextBox.Location = new System.Drawing.Point(204, 307);
             this.RoomIdTextBox.Name = "RoomIdTextBox";
-            this.RoomIdTextBox.Size = new System.Drawing.Size(115, 23);
+            this.RoomIdTextBox.Size = new System.Drawing.Size(149, 35);
             this.RoomIdTextBox.TabIndex = 5;
             this.RoomIdTextBox.Visible = false;
             // 
             // roomIdLabel
             // 
             this.roomIdLabel.AutoSize = true;
-            this.roomIdLabel.Location = new System.Drawing.Point(87, 281);
+            this.roomIdLabel.BackColor = System.Drawing.Color.Transparent;
+            this.roomIdLabel.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.roomIdLabel.ForeColor = System.Drawing.Color.White;
+            this.roomIdLabel.Location = new System.Drawing.Point(78, 311);
             this.roomIdLabel.Name = "roomIdLabel";
-            this.roomIdLabel.Size = new System.Drawing.Size(55, 15);
+            this.roomIdLabel.Size = new System.Drawing.Size(114, 31);
             this.roomIdLabel.TabIndex = 6;
             this.roomIdLabel.Text = "Room id:";
             this.roomIdLabel.Visible = false;
@@ -420,12 +431,18 @@
             // panel6
             // 
             this.panel6.BackgroundImage = global::SkribblClient.Properties.Resources.background;
+            this.panel6.Controls.Add(this.joinRadioButton);
+            this.panel6.Controls.Add(this.createRadioButton);
+            this.panel6.Controls.Add(this.connectButton);
+            this.panel6.Controls.Add(this.nextImgButton);
+            this.panel6.Controls.Add(this.prevImgButton);
+            this.panel6.Controls.Add(this.pictureBox3);
+            this.panel6.Controls.Add(this.pictureBox2);
             this.panel6.Controls.Add(this.roomIdLabel);
             this.panel6.Controls.Add(this.RoomIdTextBox);
             this.panel6.Controls.Add(this.avatarLabel);
             this.panel6.Controls.Add(this.usernameLabel);
             this.panel6.Controls.Add(this.usernameTextBox);
-            this.panel6.Controls.Add(this.joinRoomButton);
             this.panel6.Controls.Add(this.createRooomButton);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(0, 0);
@@ -433,14 +450,96 @@
             this.panel6.Size = new System.Drawing.Size(1042, 626);
             this.panel6.TabIndex = 8;
             // 
+            // joinRadioButton
+            // 
+            this.joinRadioButton.AutoSize = true;
+            this.joinRadioButton.BackColor = System.Drawing.Color.Transparent;
+            this.joinRadioButton.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.joinRadioButton.ForeColor = System.Drawing.Color.White;
+            this.joinRadioButton.Location = new System.Drawing.Point(204, 262);
+            this.joinRadioButton.Name = "joinRadioButton";
+            this.joinRadioButton.Size = new System.Drawing.Size(125, 31);
+            this.joinRadioButton.TabIndex = 13;
+            this.joinRadioButton.Text = "Join room";
+            this.joinRadioButton.UseVisualStyleBackColor = false;
+            this.joinRadioButton.Click += new System.EventHandler(this.joinRadioButton_Click);
+            // 
+            // createRadioButton
+            // 
+            this.createRadioButton.AutoSize = true;
+            this.createRadioButton.BackColor = System.Drawing.Color.Transparent;
+            this.createRadioButton.Checked = true;
+            this.createRadioButton.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.createRadioButton.ForeColor = System.Drawing.Color.White;
+            this.createRadioButton.Location = new System.Drawing.Point(84, 262);
+            this.createRadioButton.Name = "createRadioButton";
+            this.createRadioButton.Size = new System.Drawing.Size(94, 31);
+            this.createRadioButton.TabIndex = 12;
+            this.createRadioButton.TabStop = true;
+            this.createRadioButton.Text = "Create";
+            this.createRadioButton.UseVisualStyleBackColor = false;
+            this.createRadioButton.Click += new System.EventHandler(this.createRadioButton_Click);
+            // 
+            // connectButton
+            // 
+            this.connectButton.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.connectButton.Location = new System.Drawing.Point(78, 361);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(122, 36);
+            this.connectButton.TabIndex = 11;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Visible = false;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
+            // nextImgButton
+            // 
+            this.nextImgButton.Location = new System.Drawing.Point(526, 339);
+            this.nextImgButton.Name = "nextImgButton";
+            this.nextImgButton.Size = new System.Drawing.Size(34, 23);
+            this.nextImgButton.TabIndex = 10;
+            this.nextImgButton.Text = ">";
+            this.nextImgButton.UseVisualStyleBackColor = true;
+            this.nextImgButton.Click += new System.EventHandler(this.nextImgButton_Click);
+            // 
+            // prevImgButton
+            // 
+            this.prevImgButton.Location = new System.Drawing.Point(429, 339);
+            this.prevImgButton.Name = "prevImgButton";
+            this.prevImgButton.Size = new System.Drawing.Size(34, 23);
+            this.prevImgButton.TabIndex = 9;
+            this.prevImgButton.Text = "<";
+            this.prevImgButton.UseVisualStyleBackColor = true;
+            this.prevImgButton.Click += new System.EventHandler(this.prevImgButton_Click);
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox3.Location = new System.Drawing.Point(429, 209);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(131, 130);
+            this.pictureBox3.TabIndex = 8;
+            this.pictureBox3.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox2.Image = global::SkribblClient.Properties.Resources.logo;
+            this.pictureBox2.Location = new System.Drawing.Point(276, 15);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(471, 97);
+            this.pictureBox2.TabIndex = 7;
+            this.pictureBox2.TabStop = false;
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::SkribblClient.Properties.Resources.background;
             this.ClientSize = new System.Drawing.Size(1042, 626);
-            this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel6);
+            this.Controls.Add(this.panel5);
             this.Name = "GameForm";
             this.Text = "StartForm";
             this.Load += new System.EventHandler(this.GameForm_Load);
@@ -453,6 +552,8 @@
             this.panel5.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -484,7 +585,6 @@
         private Panel panel1;
         private Panel panel5;
         private Button createRooomButton;
-        private Button joinRoomButton;
         private TextBox usernameTextBox;
         private Label usernameLabel;
         private Label avatarLabel;
@@ -492,5 +592,12 @@
         private Label roomIdLabel;
         private Panel panel6;
         private Label roomShowId;
+        private PictureBox pictureBox2;
+        private Button nextImgButton;
+        private Button prevImgButton;
+        private PictureBox pictureBox3;
+        private Button connectButton;
+        private RadioButton joinRadioButton;
+        private RadioButton createRadioButton;
     }
 }

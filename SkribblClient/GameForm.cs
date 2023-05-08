@@ -28,6 +28,7 @@ namespace SkribblClient
         public Player player = null;
         public string actionType = "";
         Client client;
+        int idImg = 1;
         public GameForm()
         {
             InitializeComponent();
@@ -35,6 +36,8 @@ namespace SkribblClient
             g = Graphics.FromImage(bitmap);
             g.Clear(Color.White);
             client = new Client(this);
+            pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar1;
+
 
         }
 
@@ -255,27 +258,20 @@ namespace SkribblClient
         private void joinRoomButton_Click(object sender, EventArgs e)
         {
 
-            if (countJoin == 0)
+            if (countJoin %2 == 0)
             {
-                createRooomButton.Enabled = false;
+                //createRooomButton.Enabled = false;
                 roomIdLabel.Visible = true;
                 RoomIdTextBox.Visible = true;
-                //
-            }
-            else if (countJoin == 1)
-            {
-                //join the room with the specified id
-                actionType = "<Join room>";
-                string username = usernameTextBox.Text;
-                if (username == "")
-                {
-                    //when username is left empty fill it random
-                    username = "username random";
-                }
-                player = new Player(username, "avatar");
-                roomToJoin = Int32.Parse(RoomIdTextBox.Text);
-                client.StartClient(player);
+                connectButton.Visible = true;
 
+            }
+            else if (countJoin %2 == 1)
+            {
+
+                roomIdLabel.Visible = false;
+                RoomIdTextBox.Visible = false;
+                connectButton.Visible = false;
 
             }
 
@@ -326,6 +322,102 @@ namespace SkribblClient
                     
              }
         }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            //join the room with the specified id
+            actionType = "<Join room>";
+            string username = usernameTextBox.Text;
+            if (username == "")
+            {
+                //when username is left empty fill it random
+                username = "username random";
+            }
+            player = new Player(username, "avatar");
+            roomToJoin = Int32.Parse(RoomIdTextBox.Text);
+            client.StartClient(player);
+        }
+
+        private void prevImgButton_Click(object sender, EventArgs e)
+        {
+            if (idImg > 1)
+            {
+                idImg--;
+            }
+            switch (idImg)
+            {
+                case 1:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar1;
+                    break;
+                case 2:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar2;
+                    break;
+                case 3:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar3;
+                    break;
+                case 4:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar4;
+                    break;
+                case 5:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar5;
+                    break;
+                case 6:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar6;
+                    break;
+                case 7:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar7;
+                    break;
+            }
+        }
+
+        private void nextImgButton_Click(object sender, EventArgs e)
+        {
+            if (idImg < 7)
+            {
+                idImg++;
+            }
+            switch (idImg)
+            {
+                case 1:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar1;
+                    break;
+                case 2:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar2;
+                    break;
+                case 3:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar3;
+                    break;
+                case 4:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar4;
+                    break;
+                case 5:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar5;
+                    break;
+                case 6:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar6;
+                    break;
+                case 7:
+                    pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar7;
+                    break;
+            }
+        }
+
+        private void createRadioButton_Click(object sender, EventArgs e)
+        {
+            roomIdLabel.Visible = false;
+            RoomIdTextBox.Visible = false;
+            connectButton.Visible = false;
+            createRooomButton.Visible = true;
+        }
+
+        private void joinRadioButton_Click(object sender, EventArgs e)
+        {
+            connectButton.Visible = true;
+            roomIdLabel.Visible = true;
+            RoomIdTextBox.Visible = true;
+            createRooomButton.Visible = false;
+        }
+
         public void RunOnUiThread(Action action)
         {
             if (InvokeRequired)
