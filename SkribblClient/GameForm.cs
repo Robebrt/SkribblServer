@@ -23,13 +23,18 @@ namespace SkribblClient
         Pen pen = new Pen(Color.Black, 1);
         Pen eraser = new Pen(Color.White, 1);
         int index = 1;
-
+        public int roomToJoin;
+        int countJoin = 0;
+        public Player player = null;
+        public string actionType = "";
+        Client client;
         public GameForm()
         {
             InitializeComponent();
             bitmap = new Bitmap(pictureBox1.Width,pictureBox1.Height);
             g = Graphics.FromImage(bitmap);
             g.Clear(Color.White);
+            client = new Client(this);
 
         }
 
@@ -212,11 +217,125 @@ namespace SkribblClient
                 }
             }
         }
+
+        private void GameForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
         static Point set_point(PictureBox pictureBox, Point pt)
         {
             float pX = 1f * pictureBox.Image.Width / pictureBox.Width;
             float pY = 1f * pictureBox.Image.Height / pictureBox.Height;
             return new Point((int)(pt.X * pX), (int)(pt.Y * pY));
+        }
+        
+       
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void createRoomButton_Click(object sender, EventArgs e)
+        {
+            actionType = "<Create room>";
+            string username = usernameTextBox.Text;
+            if (username == "")
+            {
+                //when username is left empty fill it random
+                username = "username random";
+            }
+            player = new Player(username, "avatar");
+
+            client.StartClient(player);
+            
+        }
+
+        private void joinRoomButton_Click(object sender, EventArgs e)
+        {
+
+            if (countJoin == 0)
+            {
+                createRooomButton.Enabled = false;
+                roomIdLabel.Visible = true;
+                RoomIdTextBox.Visible = true;
+                //
+            }
+            else if (countJoin == 1)
+            {
+                //join the room with the specified id
+                actionType = "<Join room>";
+                string username = usernameTextBox.Text;
+                if (username == "")
+                {
+                    //when username is left empty fill it random
+                    username = "username random";
+                }
+                player = new Player(username, "avatar");
+                roomToJoin = Int32.Parse(RoomIdTextBox.Text);
+                client.StartClient(player);
+
+
+            }
+
+            countJoin++;
+
+        }
+
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            
+            if (e.KeyCode == Keys.Enter)
+            {
+                actionType = "<Chat>";
+                string message = actionType+player.roomId+textBox1.Text;
+                //richTextBox1.AppendText(message);
+                byte[] msg = Encoding.ASCII.GetBytes(message+"<EOF>");
+                client.SendMessage(msg);
+                //richTextBox1.AppendText(textBox1.Text);
+                textBox1.Text = "";
+            }
+        }
+
+        public void AddMessage(string message)
+        {
+
+                richTextBox1.AppendText(message);
+          
+        }
+        public void joinRoom(int room)
+        {
+            if(room != -1)
+            {
+                player.roomId = room;
+                roomShowId.Text = "ROOM ID: " + player.roomId;
+                actionType = "<Chat>";
+                panel6.Visible = false;
+                panel5.Visible = true;
+                
+            }
+            else
+            {
+                MessageBox.Show("Error");
+                    
+             }
+        }
+        public void RunOnUiThread(Action action)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(action);
+            }
+            else
+            {
+                action();
+            }
         }
     }
 }

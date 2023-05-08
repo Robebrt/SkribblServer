@@ -52,16 +52,28 @@
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.roomShowId = new System.Windows.Forms.Label();
+            this.createRooomButton = new System.Windows.Forms.Button();
+            this.joinRoomButton = new System.Windows.Forms.Button();
+            this.usernameTextBox = new System.Windows.Forms.TextBox();
+            this.usernameLabel = new System.Windows.Forms.Label();
+            this.avatarLabel = new System.Windows.Forms.Label();
+            this.RoomIdTextBox = new System.Windows.Forms.TextBox();
+            this.roomIdLabel = new System.Windows.Forms.Label();
+            this.panel6 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
+            this.panel5.SuspendLayout();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(711, 86);
+            this.richTextBox1.Location = new System.Drawing.Point(715, 86);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(230, 311);
             this.richTextBox1.TabIndex = 1;
@@ -69,10 +81,11 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(711, 403);
+            this.textBox1.Location = new System.Drawing.Point(715, 403);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(230, 23);
             this.textBox1.TabIndex = 2;
+            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // panel2
             // 
@@ -177,7 +190,7 @@
             this.panel3.Controls.Add(this.button11);
             this.panel3.Controls.Add(this.button10);
             this.panel3.Controls.Add(this.button9);
-            this.panel3.Location = new System.Drawing.Point(414, 432);
+            this.panel3.Location = new System.Drawing.Point(425, 432);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(129, 92);
             this.panel3.TabIndex = 4;
@@ -229,7 +242,7 @@
             this.panel4.Controls.Add(this.button15);
             this.panel4.Controls.Add(this.button14);
             this.panel4.Controls.Add(this.button13);
-            this.panel4.Location = new System.Drawing.Point(549, 432);
+            this.panel4.Location = new System.Drawing.Point(571, 432);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(125, 92);
             this.panel4.TabIndex = 5;
@@ -272,7 +285,7 @@
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(508, 28);
+            this.label1.Location = new System.Drawing.Point(350, 41);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(188, 42);
             this.label1.TabIndex = 6;
@@ -283,7 +296,7 @@
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(174, 28);
+            this.label2.Location = new System.Drawing.Point(40, 33);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(110, 50);
             this.label2.TabIndex = 7;
@@ -310,29 +323,137 @@
             this.panel1.Size = new System.Drawing.Size(522, 340);
             this.panel1.TabIndex = 0;
             // 
+            // panel5
+            // 
+            this.panel5.BackgroundImage = global::SkribblClient.Properties.Resources.background;
+            this.panel5.Controls.Add(this.roomShowId);
+            this.panel5.Controls.Add(this.label1);
+            this.panel5.Controls.Add(this.label2);
+            this.panel5.Controls.Add(this.richTextBox1);
+            this.panel5.Controls.Add(this.panel1);
+            this.panel5.Controls.Add(this.panel4);
+            this.panel5.Controls.Add(this.textBox1);
+            this.panel5.Controls.Add(this.panel3);
+            this.panel5.Controls.Add(this.panel2);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(0, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(1042, 626);
+            this.panel5.TabIndex = 8;
+            this.panel5.Visible = false;
+            // 
+            // roomShowId
+            // 
+            this.roomShowId.AutoSize = true;
+            this.roomShowId.BackColor = System.Drawing.Color.Transparent;
+            this.roomShowId.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.roomShowId.Location = new System.Drawing.Point(452, 15);
+            this.roomShowId.Name = "roomShowId";
+            this.roomShowId.Size = new System.Drawing.Size(136, 37);
+            this.roomShowId.TabIndex = 8;
+            this.roomShowId.Text = "ROOM ID:";
+            // 
+            // createRooomButton
+            // 
+            this.createRooomButton.Location = new System.Drawing.Point(81, 235);
+            this.createRooomButton.Name = "createRooomButton";
+            this.createRooomButton.Size = new System.Drawing.Size(87, 23);
+            this.createRooomButton.TabIndex = 0;
+            this.createRooomButton.Text = "Create room";
+            this.createRooomButton.UseVisualStyleBackColor = true;
+            this.createRooomButton.Click += new System.EventHandler(this.createRoomButton_Click);
+            // 
+            // joinRoomButton
+            // 
+            this.joinRoomButton.Location = new System.Drawing.Point(187, 235);
+            this.joinRoomButton.Name = "joinRoomButton";
+            this.joinRoomButton.Size = new System.Drawing.Size(87, 23);
+            this.joinRoomButton.TabIndex = 1;
+            this.joinRoomButton.Text = "Join room";
+            this.joinRoomButton.UseVisualStyleBackColor = true;
+            this.joinRoomButton.Click += new System.EventHandler(this.joinRoomButton_Click);
+            // 
+            // usernameTextBox
+            // 
+            this.usernameTextBox.Location = new System.Drawing.Point(161, 206);
+            this.usernameTextBox.Name = "usernameTextBox";
+            this.usernameTextBox.Size = new System.Drawing.Size(115, 23);
+            this.usernameTextBox.TabIndex = 2;
+            // 
+            // usernameLabel
+            // 
+            this.usernameLabel.AutoSize = true;
+            this.usernameLabel.Location = new System.Drawing.Point(87, 209);
+            this.usernameLabel.Name = "usernameLabel";
+            this.usernameLabel.Size = new System.Drawing.Size(63, 15);
+            this.usernameLabel.TabIndex = 3;
+            this.usernameLabel.Text = "Username:";
+            this.usernameLabel.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // avatarLabel
+            // 
+            this.avatarLabel.AutoSize = true;
+            this.avatarLabel.Location = new System.Drawing.Point(142, 33);
+            this.avatarLabel.Name = "avatarLabel";
+            this.avatarLabel.Size = new System.Drawing.Size(44, 15);
+            this.avatarLabel.TabIndex = 4;
+            this.avatarLabel.Text = "Avatar:";
+            // 
+            // RoomIdTextBox
+            // 
+            this.RoomIdTextBox.Location = new System.Drawing.Point(159, 278);
+            this.RoomIdTextBox.Name = "RoomIdTextBox";
+            this.RoomIdTextBox.Size = new System.Drawing.Size(115, 23);
+            this.RoomIdTextBox.TabIndex = 5;
+            this.RoomIdTextBox.Visible = false;
+            // 
+            // roomIdLabel
+            // 
+            this.roomIdLabel.AutoSize = true;
+            this.roomIdLabel.Location = new System.Drawing.Point(87, 281);
+            this.roomIdLabel.Name = "roomIdLabel";
+            this.roomIdLabel.Size = new System.Drawing.Size(55, 15);
+            this.roomIdLabel.TabIndex = 6;
+            this.roomIdLabel.Text = "Room id:";
+            this.roomIdLabel.Visible = false;
+            // 
+            // panel6
+            // 
+            this.panel6.BackgroundImage = global::SkribblClient.Properties.Resources.background;
+            this.panel6.Controls.Add(this.roomIdLabel);
+            this.panel6.Controls.Add(this.RoomIdTextBox);
+            this.panel6.Controls.Add(this.avatarLabel);
+            this.panel6.Controls.Add(this.usernameLabel);
+            this.panel6.Controls.Add(this.usernameTextBox);
+            this.panel6.Controls.Add(this.joinRoomButton);
+            this.panel6.Controls.Add(this.createRooomButton);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel6.Location = new System.Drawing.Point(0, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(1042, 626);
+            this.panel6.TabIndex = 8;
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::SkribblClient.Properties.Resources.background;
-            this.ClientSize = new System.Drawing.Size(957, 575);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.panel4);
-            this.Controls.Add(this.panel3);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(1042, 626);
+            this.Controls.Add(this.panel5);
+            this.Controls.Add(this.panel6);
             this.Name = "GameForm";
-            this.Text = "Skribbl";
+            this.Text = "StartForm";
+            this.Load += new System.EventHandler(this.GameForm_Load);
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -361,5 +482,15 @@
         private Label label2;
         private PictureBox pictureBox1;
         private Panel panel1;
+        private Panel panel5;
+        private Button createRooomButton;
+        private Button joinRoomButton;
+        private TextBox usernameTextBox;
+        private Label usernameLabel;
+        private Label avatarLabel;
+        private TextBox RoomIdTextBox;
+        private Label roomIdLabel;
+        private Panel panel6;
+        private Label roomShowId;
     }
 }

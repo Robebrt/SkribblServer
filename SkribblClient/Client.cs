@@ -11,15 +11,12 @@ namespace SkribblClient
     internal class Client
     {
         Socket sender;
-        Form1 form1;
-        RichTextBox errorTextBox;
+        GameForm gameForm;
         Boolean connection;
-        RichTextBox chatRb;
-        public Client(Form1 f1)
+        public Client(GameForm f1)
         {
-            this.form1 = f1;
-            //errorTextBox = form1.richTextBox2;
-            chatRb = form1.richTextBox1;
+            this.gameForm = f1;
+
         }
         public void StartClient(Player player)
         {
@@ -59,23 +56,20 @@ namespace SkribblClient
 
                     if (player != null)
                     {
-                        if(form1.actionType == "<Create room>")
+                        if(gameForm.actionType == "<Create room>")
                         {
                             CreateRoom(player);
-                            ReadMessage(chatRb);
+                            //ReadMessage(chatRb);
                         }
-                        else if(form1.actionType == "<Join room>")
+                        else if(gameForm.actionType == "<Join room>")
                         {
-
+                            JoinRoom(player);
                         }
-
+                        Task.Run(() =>
+                        {
+                            ReadMessage();
+                        });
                     }
-                    //
-                    //Task.Run(() =>
-                    //{
-                    //    ReadMessage(rb);
-                    //});
-
                 }
                 catch (ArgumentNullException ane)
                 {
@@ -103,27 +97,92 @@ namespace SkribblClient
         public void CreateRoom(Player player)
         {
             byte[] bytes = new byte[1024];
-            int roomId = player.GetRoom();
-
+            //int roomId = player.GetRoom();
+            string username = player.username;
             // Encode the data string into a byte array.
-            byte[] msg = Encoding.ASCII.GetBytes("<Create room>" + roomId + "<EOF>");
+            byte[] msg = Encoding.ASCII.GetBytes("<Create room>"+player.username+ "<EOF>");
 
             // Send the data through the socket.
             int bytesSent = sender.Send(msg);
 
             // Receive the response from the remote device.
-
-                int bytesRec = sender.Receive(bytes);
-                chatRb.AppendText(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n");
+            
+            int bytesRec = sender.Receive(bytes);
+            string msgReceived = Encoding.ASCII.GetString(bytes);
+            if (msgReceived != "Cannot create room")
+            {
+                int roomId = Convert.ToInt32(msgReceived.Replace("Room created",""));
+                gameForm.RunOnUiThread(() =>
+                {
+                    gameForm.joinRoom(roomId);
+                });
             }
-        public void SendMessage(byte[] msg, RichTextBox rb, TextBox tb)
+            else
+            {
+                gameForm.RunOnUiThread(() =>
+                {
+                    gameForm.joinRoom(-1);
+                });
+            }
+                //gameForm.AddMessage(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n");
+
+        }
+        public void JoinRoom(Player player)
+        {
+            byte[] bytes = new byte[1024];
+            int roomId = gameForm.roomToJoin;
+            string username = player.username;
+
+            // Encode the data string into a byte array.
+            byte[] setUserMsg = Encoding.ASCII.GetBytes("<Set username>" + player.username + "<EOF>");
+            sender.Send(setUserMsg);
+            byte[] setUserRec = new byte[1024];
+            int bytesSetUserRec = sender.Receive(setUserRec);
+            string msgSetUser = Encoding.ASCII.GetString(setUserRec);
+            MessageBox.Show(msgSetUser);
+
+            if (msgSetUser.Contains("Username set"))
+            {
+                byte[] msg = Encoding.ASCII.GetBytes("<Join room>" + roomId + "<EOF>");
+
+                // Send the data through the socket.
+                int bytesSent = sender.Send(msg);
+
+                // Receive the response from the remote device.
+                //if (sender.Available > 0)
+                //{
+                //    int bytesRec = sender.Receive(bytes);
+                //   // gameForm.AddMessage(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n");
+                //}
+                int bytesRec = sender.Receive(bytes);
+                string msgReceived = Encoding.ASCII.GetString(bytes);
+                if (msgReceived != "Cannot join room" && msgReceived != "Room doesn't exist")
+                {
+                    int roomIdServer = Convert.ToInt32(msgReceived.Replace("Room joined", ""));
+                    gameForm.RunOnUiThread(() =>
+                    {
+                        gameForm.joinRoom(roomIdServer);
+                    });
+                }
+                else
+                {
+                    gameForm.RunOnUiThread(() =>
+                    {
+                        gameForm.joinRoom(-1);
+                    });
+                }
+            }
+            else
+            {
+                MessageBox.Show("Error");
+            }
+        }
+        public void SendMessage(byte[] msg)
         {
             byte[] bytes = new byte[1024];
             try
             {
                 int bytesSent = sender.Send(msg);
-                tb.Text = "";
-                // Receive the response from the remote device.
                 
             }
             catch(Exception e)
@@ -131,19 +190,23 @@ namespace SkribblClient
                 SendError("Unexpected exception : {0} "+ e.ToString());
             }
         }
-        public void ReadMessage(RichTextBox rb)
+        public void ReadMessage()
         {
             while (connection)
             {
                 byte[] bytes = new byte[1024];
                 try
-                {   
-                    int bytesRec = sender.Receive(bytes);
-                    if(bytesRec == 0)
+                {
+                    if (sender.Available > 0)
                     {
-                        break;
+                        int bytesRec = sender.Receive(bytes);
+                        if (bytesRec == 0)
+                        {
+                            break;
+                        }
+                        gameForm.RunOnUiThread(() => gameForm.AddMessage(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n"));
+                        
                     }
-                    //form.RunOnUiThread(() => rb.AppendText(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n"));
                 }
                 catch(Exception ex) 
                 {

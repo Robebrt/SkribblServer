@@ -14,6 +14,7 @@ namespace SkribblServer
        
         //public static Dictionary<(int, int)> roomList = new Dictionary<(int, int)>();
         public static Dictionary<int, List<Client>> roomsList = new Dictionary<int, List<Client>>();
+        public static int roomId = 0;
         public static void StartServer()
         {
             IPHostEntry ipHostEntry = Dns.GetHostEntry("localhost");

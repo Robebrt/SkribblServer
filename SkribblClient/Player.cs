@@ -13,10 +13,9 @@ namespace SkribblClient
         public int score = 0;
         public int roomId;
         public string avatar;
-        public Player(string username, int roomId, string avatar)
+        public Player(string username, string avatar)
         {
             this.username = username;
-            this.roomId = roomId;
             this.avatar = avatar;
         }
         public void AddScore(int points)
