@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
-
+using Newtonsoft.Json;
 namespace SkribblClient
 {
     internal class Client
@@ -13,6 +13,7 @@ namespace SkribblClient
         Socket sender;
         GameForm gameForm;
         Boolean connection;
+        
         public Client(GameForm f1)
         {
             this.gameForm = f1;
@@ -20,7 +21,7 @@ namespace SkribblClient
         }
         public void StartClient(Player player)
         {
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[2048];
             
             try
             {
@@ -98,9 +99,10 @@ namespace SkribblClient
         {
             byte[] bytes = new byte[1024];
             //int roomId = player.GetRoom();
-            string username = player.username;
+            //string username = player.username;
+            string playerJSON = JsonConvert.SerializeObject(player);
             // Encode the data string into a byte array.
-            byte[] msg = Encoding.ASCII.GetBytes("<Create room>"+player.username+ "<EOF>");
+            byte[] msg = Encoding.ASCII.GetBytes("<Create room>"+playerJSON+ "<EOF>");
 
             // Send the data through the socket.
             int bytesSent = sender.Send(msg);
@@ -111,17 +113,20 @@ namespace SkribblClient
             string msgReceived = Encoding.ASCII.GetString(bytes);
             if (msgReceived != "Cannot create room")
             {
-                int roomId = Convert.ToInt32(msgReceived.Replace("Room created",""));
+                msgReceived = msgReceived.Replace("Room created", "");
+                int roomIdServer = Convert.ToInt32(msgReceived.Substring(0, 1));
+                string json = msgReceived.Substring(1,msgReceived.IndexOf("<EOF>")-1);
+                List<Player> list = JsonConvert.DeserializeObject<List<Player>>(json);
                 gameForm.RunOnUiThread(() =>
                 {
-                    gameForm.joinRoom(roomId);
+                    gameForm.joinRoom(roomIdServer, list);
                 });
             }
             else
             {
                 gameForm.RunOnUiThread(() =>
                 {
-                    gameForm.joinRoom(-1);
+                    MessageBox.Show("Error");
                 });
             }
                 //gameForm.AddMessage(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n");
@@ -131,15 +136,15 @@ namespace SkribblClient
         {
             byte[] bytes = new byte[1024];
             int roomId = gameForm.roomToJoin;
-            string username = player.username;
-
+            //string username = player.username;
+            string playerJSON = JsonConvert.SerializeObject(player);
             // Encode the data string into a byte array.
-            byte[] setUserMsg = Encoding.ASCII.GetBytes("<Set username>" + player.username + "<EOF>");
+            byte[] setUserMsg = Encoding.ASCII.GetBytes("<Set username>" + playerJSON + "<EOF>");
             sender.Send(setUserMsg);
             byte[] setUserRec = new byte[1024];
             int bytesSetUserRec = sender.Receive(setUserRec);
             string msgSetUser = Encoding.ASCII.GetString(setUserRec);
-            MessageBox.Show(msgSetUser);
+            
 
             if (msgSetUser.Contains("Username set"))
             {
@@ -158,17 +163,21 @@ namespace SkribblClient
                 string msgReceived = Encoding.ASCII.GetString(bytes);
                 if (msgReceived != "Cannot join room" && msgReceived != "Room doesn't exist")
                 {
-                    int roomIdServer = Convert.ToInt32(msgReceived.Replace("Room joined", ""));
+                    msgReceived = msgReceived.Replace("Room joined", "");
+                    int roomIdServer = Convert.ToInt32(msgReceived.Substring(0,1));
+                    string json = msgReceived.Substring(1, msgReceived.IndexOf("<EOF>") - 1);
+                    List<Player> list = JsonConvert.DeserializeObject<List<Player>>(json);
+
                     gameForm.RunOnUiThread(() =>
                     {
-                        gameForm.joinRoom(roomIdServer);
+                        gameForm.joinRoom(roomIdServer, list);
                     });
                 }
                 else
                 {
                     gameForm.RunOnUiThread(() =>
                     {
-                        gameForm.joinRoom(-1);
+                        MessageBox.Show("Error");
                     });
                 }
             }
@@ -179,7 +188,7 @@ namespace SkribblClient
         }
         public void SendMessage(byte[] msg)
         {
-            byte[] bytes = new byte[1024];
+            //byte[] bytes = new byte[1024];
             try
             {
                 int bytesSent = sender.Send(msg);
@@ -204,8 +213,30 @@ namespace SkribblClient
                         {
                             break;
                         }
-                        gameForm.RunOnUiThread(() => gameForm.AddMessage(Encoding.ASCII.GetString(bytes, 0, bytesRec) + "\n"));
-                        
+                        string message = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                        if (!message.StartsWith("<Draw>"))
+                        {
+                            if (message.StartsWith("Room joined"))
+                            {
+                                message = message.Replace("Room joined", "");
+                                string json = message.Substring(1, message.IndexOf("<EOF>") - 1);
+                                List<Player> list = JsonConvert.DeserializeObject<List<Player>>(json);
+                                gameForm.RunOnUiThread(() => gameForm.showPlayers(list));
+                            }
+                            else
+                            {
+                                int l = message.IndexOf("<");
+                                gameForm.RunOnUiThread(() => gameForm.AddMessage(message.Substring(0, l < 0 ? message.Length : l) + "\n"));
+                            }
+                        }
+                        else
+                        {
+                            int length = message.IndexOf("@") - "<Draw>".Length;
+                            string singleReq = message.Substring("<Draw>".Length, length);
+                            DrawingData drawingData = JsonConvert.DeserializeObject<DrawingData>(singleReq);
+                            message = message.Replace("<Draw>", "");
+                            gameForm.RunOnUiThread(() => gameForm.OnDataReceived(drawingData));
+                        }
                     }
                 }
                 catch(Exception ex) 
@@ -221,5 +252,6 @@ namespace SkribblClient
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
         }
+       
     }
 }

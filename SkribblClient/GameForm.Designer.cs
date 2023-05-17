@@ -68,6 +68,7 @@
             this.prevImgButton = new System.Windows.Forms.Button();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -334,6 +335,7 @@
             // panel5
             // 
             this.panel5.BackgroundImage = global::SkribblClient.Properties.Resources.background;
+            this.panel5.Controls.Add(this.flowLayoutPanel1);
             this.panel5.Controls.Add(this.roomShowId);
             this.panel5.Controls.Add(this.label1);
             this.panel5.Controls.Add(this.label2);
@@ -392,7 +394,6 @@
             this.usernameLabel.Size = new System.Drawing.Size(128, 31);
             this.usernameLabel.TabIndex = 3;
             this.usernameLabel.Text = "Username:";
-            this.usernameLabel.Click += new System.EventHandler(this.label1_Click);
             // 
             // avatarLabel
             // 
@@ -532,14 +533,21 @@
             this.pictureBox2.TabIndex = 7;
             this.pictureBox2.TabStop = false;
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 86);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(156, 340);
+            this.flowLayoutPanel1.TabIndex = 10;
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::SkribblClient.Properties.Resources.background;
             this.ClientSize = new System.Drawing.Size(1042, 626);
-            this.Controls.Add(this.panel6);
             this.Controls.Add(this.panel5);
+            this.Controls.Add(this.panel6);
             this.Name = "GameForm";
             this.Text = "StartForm";
             this.Load += new System.EventHandler(this.GameForm_Load);
@@ -599,5 +607,6 @@
         private Button connectButton;
         private RadioButton joinRadioButton;
         private RadioButton createRadioButton;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }

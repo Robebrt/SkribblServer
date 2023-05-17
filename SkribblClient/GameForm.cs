@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,24 +30,30 @@ namespace SkribblClient
         public string actionType = "";
         Client client;
         int idImg = 1;
+        DrawingData drawingData;
+
         public GameForm()
         {
             InitializeComponent();
-            bitmap = new Bitmap(pictureBox1.Width,pictureBox1.Height);
+            bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             g = Graphics.FromImage(bitmap);
             g.Clear(Color.White);
             client = new Client(this);
             pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar1;
+            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown; // Așează etichetele pe coloană
+            flowLayoutPanel1.AutoScroll = true;
 
 
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            paint = true;
-            px = e.Location;
+            if (e.Button == MouseButtons.Left)
+            {
+                paint = true;
+                px = e.Location;
+            }
         }
-
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             if (paint)
@@ -65,7 +72,9 @@ namespace SkribblClient
                         sizeSet = false;
                     }
                     py = e.Location;
+
                     g.DrawRectangle(pen, e.X, e.Y, pen.Width, pen.Width);
+
 
                     px = py;
                     pictureBox1.Image = bitmap;
@@ -84,11 +93,34 @@ namespace SkribblClient
                     pictureBox1.Image = bitmap;
 
                 }
-
+                drawingData = new DrawingData(px, pen.Color, pen.Width);
+                byte[] bytesToSend = drawingData.ConvertDrawingData(drawingData, player.roomId);
+                client.SendMessage(bytesToSend);
             }
 
         }
+        public void OnDataReceived(DrawingData data)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<DrawingData>(OnDataReceived), data);
+                return;
+            }
 
+
+            if (data.LineColor == Color.White)
+            {
+                g.DrawRectangle(eraser, data.StartPoint.X, data.StartPoint.Y, data.LineThickness, data.LineThickness);
+            }
+            else
+            {
+                pen.Color = data.LineColor;
+                pen.Width = data.LineThickness;
+                g.DrawRectangle(pen, data.StartPoint.X, data.StartPoint.Y, data.LineThickness, data.LineThickness);
+            }
+            pictureBox1.Image = bitmap;
+
+        }
         private void button13_Click(object sender, EventArgs e)
         {
             index = 1;
@@ -174,14 +206,14 @@ namespace SkribblClient
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            paint=false;
+            paint = false;
         }
-        public void validadte(Bitmap bitmap, Stack<Point>sp,int x, int y,Color old_color, Color new_color)
+        public void validadte(Bitmap bitmap, Stack<Point> sp, int x, int y, Color old_color, Color new_color)
         {
             Color cx = bitmap.GetPixel(x, y);
-            if(cx==old_color)
+            if (cx == old_color)
             {
-                sp.Push(new Point(x,y));
+                sp.Push(new Point(x, y));
                 bitmap.SetPixel(x, y, new_color);
             }
 
@@ -194,7 +226,7 @@ namespace SkribblClient
 
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            if(index == 3)
+            if (index == 3)
             {
                 Point point = set_point(pictureBox1, e.Location);
                 Fill(bitmap, point.X, point.Y, pen.Color);
@@ -205,10 +237,10 @@ namespace SkribblClient
         {
             Color old_color = bitmap.GetPixel(x, y);
             Stack<Point> pixel = new Stack<Point>();
-            pixel.Push(new Point(x,y));
+            pixel.Push(new Point(x, y));
             bitmap.SetPixel(x, y, new_clr);
             if (old_color == new_clr) return;
-            while(pixel.Count>0)
+            while (pixel.Count > 0)
             {
                 Point pt = (Point)pixel.Pop();
                 if (pt.X > 0 && pt.Y > 0 && pt.X < bitmap.Width - 1 && pt.Y < bitmap.Height - 1)
@@ -232,33 +264,30 @@ namespace SkribblClient
             float pY = 1f * pictureBox.Image.Height / pictureBox.Height;
             return new Point((int)(pt.X * pX), (int)(pt.Y * pY));
         }
-        
-       
 
-        private void label1_Click(object sender, EventArgs e)
-        {
 
-        }
 
         private void createRoomButton_Click(object sender, EventArgs e)
         {
             actionType = "<Create room>";
             string username = usernameTextBox.Text;
+            Random rnd = new Random();
+            int num = rnd.Next(1, 1000);
             if (username == "")
             {
                 //when username is left empty fill it random
-                username = "username random";
+                username = "username" + num;
             }
-            player = new Player(username, "avatar");
+            player = new Player(username, "Avatar" + idImg);
 
             client.StartClient(player);
-            
+
         }
 
         private void joinRoomButton_Click(object sender, EventArgs e)
         {
 
-            if (countJoin %2 == 0)
+            if (countJoin % 2 == 0)
             {
                 //createRooomButton.Enabled = false;
                 roomIdLabel.Visible = true;
@@ -266,7 +295,7 @@ namespace SkribblClient
                 connectButton.Visible = true;
 
             }
-            else if (countJoin %2 == 1)
+            else if (countJoin % 2 == 1)
             {
 
                 roomIdLabel.Visible = false;
@@ -279,20 +308,15 @@ namespace SkribblClient
 
         }
 
-        private void textBox1_Enter(object sender, EventArgs e)
-        {
-            
-        }
-
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            
+
             if (e.KeyCode == Keys.Enter)
             {
                 actionType = "<Chat>";
-                string message = actionType+player.roomId+textBox1.Text;
+                string message = actionType + player.roomId + textBox1.Text;
                 //richTextBox1.AppendText(message);
-                byte[] msg = Encoding.ASCII.GetBytes(message+"<EOF>");
+                byte[] msg = Encoding.ASCII.GetBytes(message + "<EOF>");
                 client.SendMessage(msg);
                 //richTextBox1.AppendText(textBox1.Text);
                 textBox1.Text = "";
@@ -302,38 +326,46 @@ namespace SkribblClient
         public void AddMessage(string message)
         {
 
-                richTextBox1.AppendText(message);
-          
+            richTextBox1.AppendText(message);
+
         }
-        public void joinRoom(int room)
+        public void joinRoom(int room, List<Player> list)
         {
-            if(room != -1)
+            if (room != -1)
             {
                 player.roomId = room;
                 roomShowId.Text = "ROOM ID: " + player.roomId;
                 actionType = "<Chat>";
                 panel6.Visible = false;
                 panel5.Visible = true;
-                
+                showPlayers(list);
+               
             }
-            else
-            {
-                MessageBox.Show("Error");
-                    
-             }
+          
         }
-
+        public void showPlayers(List<Player> list)
+        {
+            flowLayoutPanel1.Controls.Clear();
+            foreach (Player player in list)
+            {
+                Label label = new Label();
+                label.Text = player.username;
+                flowLayoutPanel1.Controls.Add(label);
+            }
+        }
         private void connectButton_Click(object sender, EventArgs e)
         {
             //join the room with the specified id
             actionType = "<Join room>";
             string username = usernameTextBox.Text;
+            Random rnd = new Random();
+            int num = rnd.Next(1,1000);
             if (username == "")
             {
                 //when username is left empty fill it random
-                username = "username random";
+                username = "username"+num;
             }
-            player = new Player(username, "avatar");
+            player = new Player(username, "Avatar"+idImg);
             roomToJoin = Int32.Parse(RoomIdTextBox.Text);
             client.StartClient(player);
         }
