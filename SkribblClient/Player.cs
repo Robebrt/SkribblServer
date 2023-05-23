@@ -13,6 +13,7 @@ namespace SkribblClient
         public int score = 0;
         public int roomId;
         public string avatar;
+        
         public Player(string username, string avatar)
         {
             this.username = username;

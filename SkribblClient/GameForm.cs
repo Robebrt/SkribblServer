@@ -339,10 +339,12 @@ namespace SkribblClient
                 panel6.Visible = false;
                 panel5.Visible = true;
                 showPlayers(list);
-               
+                
+                
             }
-          
+
         }
+       
         public void showPlayers(List<Player> list)
         {
             flowLayoutPanel1.Controls.Clear();
@@ -351,6 +353,17 @@ namespace SkribblClient
                 Label label = new Label();
                 label.Text = player.username;
                 flowLayoutPanel1.Controls.Add(label);
+                if(player.username == this.player.username)
+                {
+                    if (player.isDrawing == false)
+                    {
+                        pictureBox1.Enabled = false;
+                    }
+                    else
+                    {
+                        pictureBox1.Enabled = true;
+                    }
+                }
             }
         }
         private void connectButton_Click(object sender, EventArgs e)
@@ -359,13 +372,13 @@ namespace SkribblClient
             actionType = "<Join room>";
             string username = usernameTextBox.Text;
             Random rnd = new Random();
-            int num = rnd.Next(1,1000);
+            int num = rnd.Next(1, 1000);
             if (username == "")
             {
                 //when username is left empty fill it random
-                username = "username"+num;
+                username = "username" + num;
             }
-            player = new Player(username, "Avatar"+idImg);
+            player = new Player(username, "Avatar" + idImg);
             roomToJoin = Int32.Parse(RoomIdTextBox.Text);
             client.StartClient(player);
         }

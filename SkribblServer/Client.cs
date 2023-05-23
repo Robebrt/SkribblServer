@@ -17,6 +17,7 @@ namespace SkribblServer
         public Boolean isDrawing;
         public int score;
         [JsonIgnore] StringBuilder StringBuilder;
+     
         public void startClient(Socket socketIn, int clientNo)
         {
             this.socket = socketIn;
@@ -121,7 +122,8 @@ namespace SkribblServer
                     this.username = player.username;
                     this.avatar = player.avatar;
                     this.score = player.score;
-                    this.isDrawing = player.isDrawing;
+                    player.isDrawing = true;
+                    this.isDrawing = true;
                     Server.roomsList.Add(roomId, clientList);
                     List<Player> playerList = clientList.Select(client => player).ToList();
                     string json = JsonConvert.SerializeObject(playerList);
@@ -143,6 +145,14 @@ namespace SkribblServer
                         list.Add(client);
 
                         List<Player> playerList = list.Select(client => new Player(client.username, client.avatar)).ToList();
+                        playerList.ForEach(player =>
+                        {
+                            list.ForEach(client =>
+                            {
+                                player.isDrawing = client.isDrawing;
+                                player.score = 100;
+                            });
+                        });
                         string json = JsonConvert.SerializeObject(playerList);
                         response = "Room joined" + roomId+json + "<EOF>";
                         byte[] bytesToSend = Encoding.ASCII.GetBytes(response);
@@ -205,5 +215,6 @@ namespace SkribblServer
             }
             return response;
         }
+        
     }
 }
