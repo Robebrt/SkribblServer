@@ -41,7 +41,7 @@ namespace SkribblClient
             client = new Client(this);
             pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar1;
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown; // Așează etichetele pe coloană
-            flowLayoutPanel1.AutoScroll = true;
+            flowLayoutPanel1.BackColor = Color.Transparent;
 
 
         }
@@ -87,6 +87,7 @@ namespace SkribblClient
                         eraser.Width = size;
                         sizeSet = false;
                     }
+                    pen.Color = Color.White;
                     py = e.Location;
                     g.DrawRectangle(eraser, e.X, e.Y, eraser.Width, eraser.Width);
                     px = py;
@@ -229,8 +230,9 @@ namespace SkribblClient
             if (index == 3)
             {
                 Point point = set_point(pictureBox1, e.Location);
-                Fill(bitmap, point.X, point.Y, pen.Color);
+                Fill(bitmap, point.X, point.Y, color);
             }
+            pictureBox1.Image = bitmap;
         }
 
         public void Fill(Bitmap bitmap, int x, int y, Color new_clr)
@@ -239,7 +241,7 @@ namespace SkribblClient
             Stack<Point> pixel = new Stack<Point>();
             pixel.Push(new Point(x, y));
             bitmap.SetPixel(x, y, new_clr);
-            if (old_color == new_clr) return;
+            if (old_color == new_clr) { return; }
             while (pixel.Count > 0)
             {
                 Point pt = (Point)pixel.Pop();
@@ -260,8 +262,8 @@ namespace SkribblClient
 
         static Point set_point(PictureBox pictureBox, Point pt)
         {
-            float pX = 1f * pictureBox.Image.Width / pictureBox.Width;
-            float pY = 1f * pictureBox.Image.Height / pictureBox.Height;
+            float pX = 1f * pictureBox.Width / pictureBox.Width;
+            float pY = 1f * pictureBox.Height / pictureBox.Height;
             return new Point((int)(pt.X * pX), (int)(pt.Y * pY));
         }
 
@@ -349,21 +351,61 @@ namespace SkribblClient
         {
             flowLayoutPanel1.Controls.Clear();
             foreach (Player player in list)
-            {
-                Label label = new Label();
-                label.Text = player.username;
-                flowLayoutPanel1.Controls.Add(label);
-                if(player.username == this.player.username)
+            { FlowLayoutPanel fpanel = new FlowLayoutPanel();
+                PictureBox avatarImg = new PictureBox();
+                switch (player.avatar)
                 {
-                    if (player.isDrawing == false)
-                    {
-                        pictureBox1.Enabled = false;
-                    }
-                    else
-                    {
-                        pictureBox1.Enabled = true;
-                    }
+                    case "Avatar1":
+                        avatarImg.Image = global::SkribblClient.Properties.Resources.Avatar1;
+                        avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
+                        break;
+                    case "Avatar2":
+                        avatarImg.Image = global::SkribblClient.Properties.Resources.Avatar2;
+                        avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
+                        break;
+                    case "Avatar3":
+                        avatarImg.Image = global::SkribblClient.Properties.Resources.Avatar3;
+                        avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
+                        break;
+                    case "Avatar4":
+                        avatarImg.Image = global::SkribblClient.Properties.Resources.Avatar4;
+                        avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
+                        break;
+                    case "Avatar5":
+                        avatarImg.Image = global::SkribblClient.Properties.Resources.Avatar5;
+                        avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
+                        break;
+                    case "Avatar6":
+                        avatarImg.Image = global::SkribblClient.Properties.Resources.Avatar6;
+                        avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
+                        break;
+                    case "Avatar7":
+                        avatarImg.Image = global::SkribblClient.Properties.Resources.Avatar7;
+                        avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
+                        break;
                 }
+                Label label = new Label();
+                label.AutoSize = true;
+                label.Font= new Font("Times New Roman",15);
+                label.ForeColor = Color.White;
+                label.Text = player.username;
+                Label label2 = new Label();
+                label2.AutoSize = true;
+                label2.Font = new Font("Times New Roman", 15);
+                label2.ForeColor = Color.White;
+                label2.Text = "Score:" + player.score.ToString();
+                avatarImg.Width = 50;
+                avatarImg.Height = 50;
+                fpanel.FlowDirection = FlowDirection.TopDown;
+                fpanel.BackColor = Color.Transparent;
+                fpanel.Controls.Add(label);
+                fpanel.Controls.Add(avatarImg);
+                fpanel.Controls.Add(label2);
+                fpanel.BorderStyle = BorderStyle.FixedSingle;
+                fpanel.Width = 140;
+                fpanel.Height = 110;
+                flowLayoutPanel1.Controls.Add(fpanel);
+                
             }
         }
         private void connectButton_Click(object sender, EventArgs e)
