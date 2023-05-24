@@ -223,6 +223,12 @@ namespace SkribblClient
                                 List<Player> list = JsonConvert.DeserializeObject<List<Player>>(json);
                                 gameForm.RunOnUiThread(() => gameForm.showPlayers(list));
                             }
+                            else if (message.StartsWith("<Timer>"))
+                            {
+                                message = message.Replace("<Timer>", "");
+                                int seconds = Int32.Parse(message);
+                                gameForm.RunOnUiThread(() => gameForm.SetTimer(seconds));
+                            }
                             else
                             {
                                 int l = message.IndexOf("<");
