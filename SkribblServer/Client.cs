@@ -144,16 +144,10 @@ namespace SkribblServer
                 // Timer-ul a expirat, opriți-l sau executați alte acțiuni necesare
                 if (Server.roomsList.TryGetValue(roomId, out List<Client> list))
                 {
-                    int currentIndex = 0;
-                    foreach (Client client in list)
-                    {
-                        currentIndex++;
-                        if (client.isDrawing == true)
-                        {
-                            client.isDrawing = false;
-                            return;
-                        }
-                    }
+                    
+                    int currentIndex = list.FindIndex(client => client.isDrawing == true);
+                    Client currentClient = list[currentIndex];
+                    currentClient.isDrawing = false;
                     int nextIndex;
                     if (currentIndex == list.Count - 1)
                     {
