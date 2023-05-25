@@ -360,8 +360,9 @@
             this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 86);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(5);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(156, 438);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(156, 340);
             this.flowLayoutPanel1.TabIndex = 10;
+            this.flowLayoutPanel1.WrapContents = false;
             // 
             // roomShowId
             // 

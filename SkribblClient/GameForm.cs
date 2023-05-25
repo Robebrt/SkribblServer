@@ -400,7 +400,7 @@ namespace SkribblClient
                 fpanel.Controls.Add(avatarImg);
                 fpanel.Controls.Add(label2);
                 fpanel.BorderStyle = BorderStyle.FixedSingle;
-                fpanel.Width = 140;
+                fpanel.Width = 130;
                 fpanel.Height = 110;
                 flowLayoutPanel1.Controls.Add(fpanel);
                 

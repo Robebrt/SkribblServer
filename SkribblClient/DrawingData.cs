@@ -14,7 +14,6 @@ namespace SkribblClient
         public Point StartPoint { get; set; }
         public Color LineColor { get; set; }
         public float LineThickness { get; set; }
-
         public DrawingData(Point startPoint, Color lineColor, float lineThickness)
         {
             StartPoint = startPoint;
