@@ -31,7 +31,8 @@ namespace SkribblClient
         Client client;
         int idImg = 1;
         DrawingData drawingData;
-
+        string word;
+        string[] words = { "Casa", "Copac", "Soare", "Caine", "Masa", "Padure", "Fluture", "Ciocolata", "Minge", "Telefon", "Munte", "Bicicleta", "Cantec", "Fereastra", "Apa", "Trandafir", "Carte", "Stea", "Paine", "Avion", "Portocala", "Buzunar", "Lac", "Clopot", "Vultur", "Inghetata", "Valiza", "Hartie", "Balon", "Calatorie" };
         public GameForm()
         {
             InitializeComponent();
@@ -42,7 +43,6 @@ namespace SkribblClient
             pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar1;
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown; // Așează etichetele pe coloană
             flowLayoutPanel1.BackColor = Color.Transparent;
-
 
         }
 
@@ -105,6 +105,7 @@ namespace SkribblClient
             TimeSpan timeSpan = TimeSpan.FromSeconds(seconds);
             string formattedTime = timeSpan.ToString("mm\\:ss");
             label2.Text = formattedTime;
+           
         }
         public void OnDataReceived(DrawingData data)
         {
@@ -297,7 +298,9 @@ namespace SkribblClient
                 //when username is left empty fill it random
                 username = "username" + num;
             }
-            player = new Player(username, "Avatar" + idImg,false);
+            Random random = new Random();
+            int Newnum = random.Next(1, 30);
+            player = new Player(username, "Avatar" + idImg, false, words[Newnum], 0);
 
             client.StartClient(player);
 
@@ -358,16 +361,24 @@ namespace SkribblClient
                 panel6.Visible = false;
                 panel5.Visible = true;
                 showPlayers(list);
-               
+
             }
 
         }
-       
+
         public void showPlayers(List<Player> list)
         {
             flowLayoutPanel1.Controls.Clear();
+            foreach(Player player in list)
+            {
+                if(player.word!="")
+                {
+                    word = player.word;
+                }
+            }
             foreach (Player player in list)
-            { FlowLayoutPanel fpanel = new FlowLayoutPanel();
+            {
+                FlowLayoutPanel fpanel = new FlowLayoutPanel();
                 PictureBox avatarImg = new PictureBox();
                 switch (player.avatar)
                 {
@@ -402,7 +413,7 @@ namespace SkribblClient
                 }
                 Label label = new Label();
                 label.AutoSize = true;
-                label.Font= new Font("Times New Roman",15);
+                label.Font = new Font("Times New Roman", 15);
                 label.ForeColor = Color.White;
                 label.Text = player.username;
                 Label label2 = new Label();
@@ -421,22 +432,32 @@ namespace SkribblClient
                 fpanel.Width = 140;
                 fpanel.Height = 110;
                 flowLayoutPanel1.Controls.Add(fpanel);
-                if(player.username == this.player.username)
+                
+                
+                if (player.username == this.player.username)
                 {
                     if (player.isDrawing == false)
                     {
                         pictureBox1.Enabled = false;
+                        textBox1.Enabled = true;
+                        label1.Text = "";
+                        for(int i=0;i<word.Length;i++)
+                        {
+                            label1.Text += "_ ";
+                        }
                     }
                     else
                     {
                         pictureBox1.Enabled = true;
+                        textBox1.Enabled = false;
+                        label1.Text = word;
 
                     }
                 }
-                
+
             }
         }
-        
+
         private void connectButton_Click(object sender, EventArgs e)
         {
             //join the room with the specified id
@@ -449,7 +470,7 @@ namespace SkribblClient
                 //when username is left empty fill it random
                 username = "username" + num;
             }
-            player = new Player(username, "Avatar" + idImg,false);
+            player = new Player(username, "Avatar" + idImg, false,"",0);
             roomToJoin = Int32.Parse(RoomIdTextBox.Text);
             client.StartClient(player);
         }

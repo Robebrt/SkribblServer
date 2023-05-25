@@ -16,6 +16,7 @@ namespace SkribblServer
         public int score;
         public System.Timers.Timer timer;
         int countdownSeconds;
+        public string word;
         [JsonIgnore] StringBuilder StringBuilder;
 
         public void startClient(Socket socketIn, int clientNo)
@@ -148,6 +149,7 @@ namespace SkribblServer
                     int currentIndex = list.FindIndex(client => client.isDrawing == true);
                     Client currentClient = list[currentIndex];
                     currentClient.isDrawing = false;
+                    currentClient.word = "";
                     int nextIndex;
                     if (currentIndex == list.Count - 1)
                     {
@@ -159,9 +161,12 @@ namespace SkribblServer
                     }
                     Client nextClient = list[nextIndex];
                     nextClient.isDrawing = true;
+                    Random random = new Random();
+                    int num = random.Next(1, 30);
+                    nextClient.word = Server.words[num];
                 }
                 timer.Stop();
-                List<Player> playerList = list.Select(client => new Player(client.username, client.avatar, client.isDrawing)).ToList();
+                List<Player> playerList = list.Select(client => new Player(client.username, client.avatar, client.isDrawing, client.word, client.score)).ToList();
                 string json = JsonConvert.SerializeObject(playerList);
                 string response = "Room joined" + roomId + json + "<EOF>";
                 byte[] bytesToSend = Encoding.ASCII.GetBytes(response);
@@ -192,7 +197,7 @@ namespace SkribblServer
                     this.score = player.score;
                     player.isDrawing = true;
                     this.isDrawing = true;
-
+                    this.word = player.word;
                     countdownSeconds = 10; // Numărul de secunde pentru countdown
 
                     timer = new System.Timers.Timer(1000); // Interval de 1 secundă (1000 milisecunde)
@@ -219,7 +224,7 @@ namespace SkribblServer
                     {
                         list.Add(client);
 
-                        List<Player> playerList = list.Select(client => new Player(client.username, client.avatar, client.isDrawing)).ToList();
+                        List<Player> playerList = list.Select(client => new Player(client.username, client.avatar, client.isDrawing,client.word,client.score)).ToList();
                         string json = JsonConvert.SerializeObject(playerList);
                         response = "Room joined" + roomId + json + "<EOF>";
                         byte[] bytesToSend = Encoding.ASCII.GetBytes(response);
@@ -262,6 +267,16 @@ namespace SkribblServer
                 Byte[] sendBytes = Encoding.ASCII.GetBytes(this.username + ": " + message.Substring(1, message.Length - 1));
                 if (Server.roomsList.TryGetValue(roomId, out List<Client> list))
                 {
+                    int currentIndex = list.FindIndex(client => client.isDrawing == true);
+                    Client currentClient = list[currentIndex];
+                    int seconds = list[0].countdownSeconds;
+                    //Console.WriteLine(currentClient.word.ToLower() +" "+ message.Substring(1, message.Length - 1));
+                    if (currentClient.word.ToLower() == message.Substring(1, message.Length - 1))
+                    {
+                        
+                        this.score += seconds;
+                        
+                    }
                     SendMessageToClients(list, sendBytes);
                     //response = "Message sent";
                 }
@@ -278,6 +293,7 @@ namespace SkribblServer
                 this.avatar = player.avatar;
                 this.score = player.score;
                 this.isDrawing = player.isDrawing;
+                this.word = player.word;
                 response = "Username set";
             }
             return response;
