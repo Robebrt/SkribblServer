@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using System.Net.Sockets;
 using Newtonsoft.Json;
 using SkribblClient;
+using System.Timers;
+
 namespace SkribblServer
 {
     public class Client
@@ -16,7 +14,10 @@ namespace SkribblServer
         public string avatar;
         public Boolean isDrawing;
         public int score;
+        public System.Timers.Timer timer;
+        int countdownSeconds;
         [JsonIgnore] StringBuilder StringBuilder;
+
         public void startClient(Socket socketIn, int clientNo)
         {
             this.socket = socketIn;
@@ -39,7 +40,7 @@ namespace SkribblServer
                 {
                     requestCount = requestCount + 1;
                     int noBytesRecieved = socket.Receive(bytesFrom);
-                    string stringBytesFrom = Encoding.ASCII.GetString(bytesFrom,0,noBytesRecieved);
+                    string stringBytesFrom = Encoding.ASCII.GetString(bytesFrom, 0, noBytesRecieved);
                     StringBuilder.Append(stringBytesFrom);
                     ParseRequest();
                     if (noBytesRecieved == 0)
@@ -105,6 +106,79 @@ namespace SkribblServer
                 }
             }
         }
+        public void SendMessageExcludeMe(List<Client> list, Byte[] bytesToSend)
+        {
+            foreach (Client client in list)
+            {
+                if (client != this)
+                {
+                    try
+                    {
+                        int bytesSend = client.socket.Send(bytesToSend);
+                        //Console.WriteLine($"{client.socket.RemoteEndPoint} {bytesSend}");
+
+                    }
+                    catch (SocketException ex)
+                    {
+                        Console.WriteLine("Failed to send message to a socket: " + ex.Message);
+                    }
+                }
+            }
+        }
+        private void TimerElapsed(ElapsedEventArgs e, int roomId)
+        {
+            // Trimite un mesaj la fiecare secundă trecută
+
+            if (countdownSeconds > 0)
+            {
+                // Trimiteți valoarea countdownSeconds către clienți
+                string message = countdownSeconds.ToString();
+                if (Server.roomsList.TryGetValue(roomId, out List<Client> list))
+                {
+                    SendMessageToClients(list, Encoding.ASCII.GetBytes("<Timer>" + message));
+                }
+                countdownSeconds--; // Scădeți valoarea countdownSeconds cu 1
+            }
+            else
+            {
+                // Timer-ul a expirat, opriți-l sau executați alte acțiuni necesare
+                if (Server.roomsList.TryGetValue(roomId, out List<Client> list))
+                {
+                    int currentIndex = 0;
+                    foreach (Client client in list)
+                    {
+                        currentIndex++;
+                        if (client.isDrawing == true)
+                        {
+                            client.isDrawing = false;
+                            return;
+                        }
+                    }
+                    int nextIndex;
+                    if (currentIndex == list.Count - 1)
+                    {
+                        nextIndex = 0;
+                    }
+                    else
+                    {
+                        nextIndex = (currentIndex + 1) % list.Count;
+                    }
+                    Client nextClient = list[nextIndex];
+                    nextClient.isDrawing = true;
+                }
+                timer.Stop();
+                List<Player> playerList = list.Select(client => new Player(client.username, client.avatar, client.isDrawing)).ToList();
+                string json = JsonConvert.SerializeObject(playerList);
+                string response = "Room joined" + roomId + json + "<EOF>";
+                byte[] bytesToSend = Encoding.ASCII.GetBytes(response);
+                SendMessageToClients(list, bytesToSend);
+
+                countdownSeconds = 10;
+                timer.Start();
+                // Restul acțiunilor pe care doriți să le efectuați când timer-ul ajunge la 0
+            }
+
+        }
         public string RequestHandler(string clientRequest, Client client)
         {
             string response = "";
@@ -115,17 +189,26 @@ namespace SkribblServer
                     List<Client> clientList = new List<Client>();
                     //int roomId = Int32.Parse(clientRequest.Replace("<Create room>", ""));
                     clientList.Add(client);
+
                     int roomId = Server.roomId++;
                     string playerJson = (clientRequest.Replace("<Create room>", ""));
                     Player player = JsonConvert.DeserializeObject<Player>(playerJson);
                     this.username = player.username;
                     this.avatar = player.avatar;
                     this.score = player.score;
-                    this.isDrawing = player.isDrawing;
+                    player.isDrawing = true;
+                    this.isDrawing = true;
+
+                    countdownSeconds = 10; // Numărul de secunde pentru countdown
+
+                    timer = new System.Timers.Timer(1000); // Interval de 1 secundă (1000 milisecunde)
+                    timer.Elapsed += (sender, e) => TimerElapsed(e, roomId);
+                    timer.Start();
+
                     Server.roomsList.Add(roomId, clientList);
                     List<Player> playerList = clientList.Select(client => player).ToList();
                     string json = JsonConvert.SerializeObject(playerList);
-                    response = "Room created" + roomId+json+"<EOF>";
+                    response = "Room created" + roomId + json + "<EOF>";
                 }
                 catch (FormatException ex)
                 {
@@ -142,9 +225,9 @@ namespace SkribblServer
                     {
                         list.Add(client);
 
-                        List<Player> playerList = list.Select(client => new Player(client.username, client.avatar)).ToList();
+                        List<Player> playerList = list.Select(client => new Player(client.username, client.avatar, client.isDrawing)).ToList();
                         string json = JsonConvert.SerializeObject(playerList);
-                        response = "Room joined" + roomId+json + "<EOF>";
+                        response = "Room joined" + roomId + json + "<EOF>";
                         byte[] bytesToSend = Encoding.ASCII.GetBytes(response);
                         SendMessageToClients(list, bytesToSend);
                     }
@@ -165,11 +248,11 @@ namespace SkribblServer
                 //draw to all users
                 string message = clientRequest.Replace("<Draw>", "");
                 int roomId = Int32.Parse(message.Substring(0, 1));
-               
-                Byte[] sendBytes = Encoding.ASCII.GetBytes("<Draw>"+message.Substring(1, message.Length - 1)+"@");
+
+                Byte[] sendBytes = Encoding.ASCII.GetBytes("<Draw>" + message.Substring(1, message.Length - 1) + "@");
                 if (Server.roomsList.TryGetValue(roomId, out List<Client> list))
                 {
-                    SendMessageToClients(list, sendBytes);
+                    SendMessageExcludeMe(list, sendBytes);
                     //response = "Message sent";
                 }
                 else
@@ -205,5 +288,6 @@ namespace SkribblServer
             }
             return response;
         }
+
     }
 }

@@ -17,7 +17,7 @@ namespace SkribblClient
         Graphics g;
         bool paint = false;
         Point px, py;
-        Color color;
+        Color color = Color.Black;
         bool colorSet = false;
         bool sizeSet = false;
         int size;
@@ -94,11 +94,17 @@ namespace SkribblClient
                     pictureBox1.Image = bitmap;
 
                 }
-                drawingData = new DrawingData(px, pen.Color, pen.Width);
+                drawingData = new DrawingData(px, pen.Color, pen.Width, false);
                 byte[] bytesToSend = drawingData.ConvertDrawingData(drawingData, player.roomId);
                 client.SendMessage(bytesToSend);
             }
 
+        }
+        public void SetTimer(int seconds)
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(seconds);
+            string formattedTime = timeSpan.ToString("mm\\:ss");
+            label2.Text = formattedTime;
         }
         public void OnDataReceived(DrawingData data)
         {
@@ -108,16 +114,22 @@ namespace SkribblClient
                 return;
             }
 
-
-            if (data.LineColor == Color.White)
+            if (data.Fill == true)
             {
-                g.DrawRectangle(eraser, data.StartPoint.X, data.StartPoint.Y, data.LineThickness, data.LineThickness);
+                Fill(bitmap, data.StartPoint.X, data.StartPoint.Y, data.LineColor);
             }
             else
             {
-                pen.Color = data.LineColor;
-                pen.Width = data.LineThickness;
-                g.DrawRectangle(pen, data.StartPoint.X, data.StartPoint.Y, data.LineThickness, data.LineThickness);
+                if (data.LineColor == Color.White)
+                {
+                    g.DrawRectangle(eraser, data.StartPoint.X, data.StartPoint.Y, data.LineThickness, data.LineThickness);
+                }
+                else
+                {
+                    pen.Color = data.LineColor;
+                    pen.Width = data.LineThickness;
+                    g.DrawRectangle(pen, data.StartPoint.X, data.StartPoint.Y, data.LineThickness, data.LineThickness);
+                }
             }
             pictureBox1.Image = bitmap;
 
@@ -231,6 +243,11 @@ namespace SkribblClient
             {
                 Point point = set_point(pictureBox1, e.Location);
                 Fill(bitmap, point.X, point.Y, color);
+
+                DrawingData dd = new DrawingData(point, color, 0, true);
+                byte[] bytesToSend = dd.ConvertDrawingData(dd, player.roomId);
+                client.SendMessage(bytesToSend);
+
             }
             pictureBox1.Image = bitmap;
         }
@@ -280,7 +297,7 @@ namespace SkribblClient
                 //when username is left empty fill it random
                 username = "username" + num;
             }
-            player = new Player(username, "Avatar" + idImg);
+            player = new Player(username, "Avatar" + idImg,false);
 
             client.StartClient(player);
 
@@ -343,8 +360,9 @@ namespace SkribblClient
                 showPlayers(list);
                
             }
-          
+
         }
+       
         public void showPlayers(List<Player> list)
         {
             flowLayoutPanel1.Controls.Clear();
@@ -403,22 +421,35 @@ namespace SkribblClient
                 fpanel.Width = 130;
                 fpanel.Height = 110;
                 flowLayoutPanel1.Controls.Add(fpanel);
+                if(player.username == this.player.username)
+                {
+                    if (player.isDrawing == false)
+                    {
+                        pictureBox1.Enabled = false;
+                    }
+                    else
+                    {
+                        pictureBox1.Enabled = true;
+
+                    }
+                }
                 
             }
         }
+        
         private void connectButton_Click(object sender, EventArgs e)
         {
             //join the room with the specified id
             actionType = "<Join room>";
             string username = usernameTextBox.Text;
             Random rnd = new Random();
-            int num = rnd.Next(1,1000);
+            int num = rnd.Next(1, 1000);
             if (username == "")
             {
                 //when username is left empty fill it random
-                username = "username"+num;
+                username = "username" + num;
             }
-            player = new Player(username, "Avatar"+idImg);
+            player = new Player(username, "Avatar" + idImg,false);
             roomToJoin = Int32.Parse(RoomIdTextBox.Text);
             client.StartClient(player);
         }
