@@ -45,6 +45,7 @@
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.button16 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
@@ -248,6 +249,7 @@
             // panel4
             // 
             this.panel4.BackColor = System.Drawing.Color.Transparent;
+            this.panel4.Controls.Add(this.button16);
             this.panel4.Controls.Add(this.button15);
             this.panel4.Controls.Add(this.button14);
             this.panel4.Controls.Add(this.button13);
@@ -255,6 +257,17 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(125, 92);
             this.panel4.TabIndex = 5;
+            // 
+            // button16
+            // 
+            this.button16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button16.Location = new System.Drawing.Point(64, 47);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(46, 29);
+            this.button16.TabIndex = 4;
+            this.button16.Text = "Clear";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
             // button15
             // 
@@ -347,7 +360,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1042, 626);
+            this.panel5.Size = new System.Drawing.Size(1038, 612);
             this.panel5.TabIndex = 8;
             this.panel5.Visible = false;
             // 
@@ -356,10 +369,10 @@
             this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.flowLayoutPanel1.AutoScroll = true;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 86);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(10, 86);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(5);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(156, 340);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(156, 438);
             this.flowLayoutPanel1.TabIndex = 10;
             this.flowLayoutPanel1.WrapContents = false;
             // 
@@ -460,7 +473,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(0, 0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1042, 626);
+            this.panel6.Size = new System.Drawing.Size(1038, 612);
             this.panel6.TabIndex = 8;
             // 
             // joinRadioButton
@@ -550,7 +563,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::SkribblClient.Properties.Resources.background;
-            this.ClientSize = new System.Drawing.Size(1042, 626);
+            this.ClientSize = new System.Drawing.Size(1038, 612);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel6);
             this.Name = "GameForm";
@@ -613,5 +626,6 @@
         private RadioButton joinRadioButton;
         private RadioButton createRadioButton;
         private FlowLayoutPanel flowLayoutPanel1;
+        private Button button16;
     }
 }

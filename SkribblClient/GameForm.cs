@@ -32,10 +32,18 @@ namespace SkribblClient
         int idImg = 1;
         DrawingData drawingData;
         string word;
-        string[] words = { "Casa", "Copac", "Soare", "Caine", "Masa", "Padure", "Fluture", "Ciocolata", "Minge", "Telefon", "Munte", "Bicicleta", "Cantec", "Fereastra", "Apa", "Trandafir", "Carte", "Stea", "Paine", "Avion", "Portocala", "Buzunar", "Lac", "Clopot", "Vultur", "Inghetata", "Valiza", "Hartie", "Balon", "Calatorie" };
+        string[] words;
+        string server = "localhost";
+        string database = "skribbl_game_db";
+        string uid = "root";
+        string password = "admin";
+
+
         public GameForm()
         {
             InitializeComponent();
+            SkribblDbConnection dbCon = new SkribblDbConnection(server, database, uid, password);
+            words = dbCon.GetAllWords();
             bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             g = Graphics.FromImage(bitmap);
             g.Clear(Color.White);
@@ -43,6 +51,7 @@ namespace SkribblClient
             pictureBox3.Image = global::SkribblClient.Properties.Resources.Avatar1;
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown; // Așează etichetele pe coloană
             flowLayoutPanel1.BackColor = Color.Transparent;
+            
 
         }
 
@@ -94,7 +103,7 @@ namespace SkribblClient
                     pictureBox1.Image = bitmap;
 
                 }
-                drawingData = new DrawingData(px, pen.Color, pen.Width, false);
+                drawingData = new DrawingData(px, pen.Color, pen.Width, false,false);
                 byte[] bytesToSend = drawingData.ConvertDrawingData(drawingData, player.roomId);
                 client.SendMessage(bytesToSend);
             }
@@ -131,6 +140,10 @@ namespace SkribblClient
                     pen.Width = data.LineThickness;
                     g.DrawRectangle(pen, data.StartPoint.X, data.StartPoint.Y, data.LineThickness, data.LineThickness);
                 }
+            }
+            if (data.Clear == true)
+            {
+                clear();
             }
             pictureBox1.Image = bitmap;
 
@@ -222,7 +235,7 @@ namespace SkribblClient
         {
             paint = false;
         }
-        public void validadte(Bitmap bitmap, Stack<Point> sp, int x, int y, Color old_color, Color new_color)
+        public void validate(Bitmap bitmap, Stack<Point> sp, int x, int y, Color old_color, Color new_color)
         {
             Color cx = bitmap.GetPixel(x, y);
             if (cx == old_color)
@@ -245,7 +258,7 @@ namespace SkribblClient
                 Point point = set_point(pictureBox1, e.Location);
                 Fill(bitmap, point.X, point.Y, color);
 
-                DrawingData dd = new DrawingData(point, color, 0, true);
+                DrawingData dd = new DrawingData(point, color, 0, true, false);
                 byte[] bytesToSend = dd.ConvertDrawingData(dd, player.roomId);
                 client.SendMessage(bytesToSend);
 
@@ -265,10 +278,10 @@ namespace SkribblClient
                 Point pt = (Point)pixel.Pop();
                 if (pt.X > 0 && pt.Y > 0 && pt.X < bitmap.Width - 1 && pt.Y < bitmap.Height - 1)
                 {
-                    validadte(bitmap, pixel, pt.X - 1, pt.Y, old_color, new_clr);
-                    validadte(bitmap, pixel, pt.X, pt.Y - 1, old_color, new_clr);
-                    validadte(bitmap, pixel, pt.X + 1, pt.Y, old_color, new_clr);
-                    validadte(bitmap, pixel, pt.X, pt.Y + 1, old_color, new_clr);
+                    validate(bitmap, pixel, pt.X - 1, pt.Y, old_color, new_clr);
+                    validate(bitmap, pixel, pt.X, pt.Y - 1, old_color, new_clr);
+                    validate(bitmap, pixel, pt.X + 1, pt.Y, old_color, new_clr);
+                    validate(bitmap, pixel, pt.X, pt.Y + 1, old_color, new_clr);
                 }
             }
         }
@@ -378,6 +391,29 @@ namespace SkribblClient
             }
             foreach (Player player in list)
             {
+                Label label = new Label();
+                Label label2 = new Label();
+                if (player.username == this.player.username)
+                {
+                    if (player.isDrawing == false)
+                    {
+                        pictureBox1.Enabled = false;
+                        textBox1.Enabled = true;
+                        label1.Text = "";
+                        for (int i = 0; i < word.Length; i++)
+                        {
+                            label1.Text += "_ ";
+                        }
+                    }
+                    else
+                    {
+                        pictureBox1.Enabled = true;
+                        textBox1.Enabled = false;
+                        label1.Text = word;
+
+                    }
+                }
+                
                 FlowLayoutPanel fpanel = new FlowLayoutPanel();
                 PictureBox avatarImg = new PictureBox();
                 switch (player.avatar)
@@ -411,12 +447,11 @@ namespace SkribblClient
                         avatarImg.SizeMode = PictureBoxSizeMode.StretchImage;
                         break;
                 }
-                Label label = new Label();
+
                 label.AutoSize = true;
-                label.Font = new Font("Times New Roman", 15);
                 label.ForeColor = Color.White;
+                label.Font = new Font("Times New Roman", 15);
                 label.Text = player.username;
-                Label label2 = new Label();
                 label2.AutoSize = true;
                 label2.Font = new Font("Times New Roman", 15);
                 label2.ForeColor = Color.White;
@@ -434,26 +469,7 @@ namespace SkribblClient
                 flowLayoutPanel1.Controls.Add(fpanel);
                 
                 
-                if (player.username == this.player.username)
-                {
-                    if (player.isDrawing == false)
-                    {
-                        pictureBox1.Enabled = false;
-                        textBox1.Enabled = true;
-                        label1.Text = "";
-                        for(int i=0;i<word.Length;i++)
-                        {
-                            label1.Text += "_ ";
-                        }
-                    }
-                    else
-                    {
-                        pictureBox1.Enabled = true;
-                        textBox1.Enabled = false;
-                        label1.Text = word;
 
-                    }
-                }
 
             }
         }
@@ -553,6 +569,22 @@ namespace SkribblClient
             roomIdLabel.Visible = true;
             RoomIdTextBox.Visible = true;
             createRooomButton.Visible = false;
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+
+            clear();
+            Point point = new Point();
+            DrawingData dd = new DrawingData(point, color, 0, false, true);
+            byte[] bytesToSend = dd.ConvertDrawingData(dd, player.roomId);
+            client.SendMessage(bytesToSend);
+        }
+        public void clear()
+        {
+            Graphics g = Graphics.FromImage(bitmap);
+            g.Clear(Color.White);
+            pictureBox1.Refresh();
         }
 
         public void RunOnUiThread(Action action)

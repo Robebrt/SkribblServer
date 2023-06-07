@@ -227,6 +227,10 @@ namespace SkribblClient
                             {
                                 message = message.Replace("<Timer>", "");
                                 int seconds = Int32.Parse(message);
+                                if(seconds <= 1)
+                                {
+                                    gameForm.RunOnUiThread(() => gameForm.clear());
+                                }
                                 gameForm.RunOnUiThread(() => gameForm.SetTimer(seconds));
                             }
                             else

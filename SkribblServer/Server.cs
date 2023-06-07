@@ -15,13 +15,20 @@ namespace SkribblServer
         //public static Dictionary<(int, int)> roomList = new Dictionary<(int, int)>();
         public static Dictionary<int, List<Client>> roomsList = new Dictionary<int, List<Client>>();
         public static int roomId = 0;
-        public static string[] words = { "Casa", "Copac", "Soare", "Caine", "Masa", "Padure", "Fluture", "Ciocolata", "Minge", "Telefon", "Munte", "Bicicleta", "Cantec", "Fereastra", "Apa", "Trandafir", "Carte", "Stea", "Paine", "Avion", "Portocala", "Buzunar", "Lac", "Clopot", "Vultur", "Inghetata", "Valiza", "Hartie", "Balon", "Calatorie" };
+        public static string[] words;
+
         public static void StartServer()
         {
             IPHostEntry ipHostEntry = Dns.GetHostEntry("localhost");
             IPAddress ipAddress = ipHostEntry.AddressList[0];
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, 3000);
             int counter;
+            string server = "localhost";
+            string database = "skribbl_game_db";
+            string uid = "root";
+            string password = "admin";
+            SkribblDbConnection dbCon = new SkribblDbConnection(server, database, uid, password);
+            words = dbCon.GetAllWords();
 
             try
             {

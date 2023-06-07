@@ -15,12 +15,14 @@ namespace SkribblClient
         public Color LineColor { get; set; }
         public float LineThickness { get; set; }
         public Boolean Fill { get; set; }
-        public DrawingData(Point startPoint, Color lineColor, float lineThickness, Boolean fill)
+        public Boolean Clear { get; set; }
+        public DrawingData(Point startPoint, Color lineColor, float lineThickness, Boolean fill, bool clear)
         {
             StartPoint = startPoint;
             LineColor = lineColor;
             LineThickness = lineThickness;
             Fill = fill;
+            Clear = clear;
         }
 
         public byte[] ConvertDrawingData(DrawingData data, int id)

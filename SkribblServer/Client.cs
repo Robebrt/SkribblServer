@@ -164,6 +164,7 @@ namespace SkribblServer
                     Random random = new Random();
                     int num = random.Next(1, 30);
                     nextClient.word = Server.words[num];
+
                 }
                 timer.Stop();
                 List<Player> playerList = list.Select(client => new Player(client.username, client.avatar, client.isDrawing, client.word, client.score)).ToList();
@@ -172,7 +173,7 @@ namespace SkribblServer
                 byte[] bytesToSend = Encoding.ASCII.GetBytes(response);
                 SendMessageToClients(list, bytesToSend);
 
-                countdownSeconds = 10;
+                countdownSeconds = 20;
                 timer.Start();
                 // Restul acțiunilor pe care doriți să le efectuați când timer-ul ajunge la 0
             }
@@ -198,7 +199,7 @@ namespace SkribblServer
                     player.isDrawing = true;
                     this.isDrawing = true;
                     this.word = player.word;
-                    countdownSeconds = 10; // Numărul de secunde pentru countdown
+                    countdownSeconds = 20; // Numărul de secunde pentru countdown
 
                     timer = new System.Timers.Timer(1000); // Interval de 1 secundă (1000 milisecunde)
                     timer.Elapsed += (sender, e) => TimerElapsed(e, roomId);
